@@ -1,0 +1,27 @@
+{
+  "name": "cmg.api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.py",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "pytest --cov=./src --cov-report=html",
+    "redoc": "swagger-merger -i ./docs/swagger.yaml -o swagger.yaml && redoc-cli bundle swagger.yaml",
+    "build-postgres": "cd tests/db && docker-compose up -d",
+    "makemigrations": "alembic revision --autogenerate",
+    "update-database": "alembic upgrade head"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "redoc-cli": "^0.13.10"
+  },
+  "dependencies": {
+    "serverless-python-requirements": "^5.4.0",
+    "serverless-wsgi": "^3.0.0",
+    "swagger-merger": "^1.5.4"
+  }
+}

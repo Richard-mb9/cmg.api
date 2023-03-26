@@ -1,0 +1,132 @@
+/stores:
+  post:
+    tags:
+      - "Lojas"
+    summary: "Cria uma loja"
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAndUpdateStoresRequest"
+    responses:
+      201:
+        description: "Loja criada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "id"
+              properties:
+                id:
+                  type: int
+                  description: "id da loja"
+                  example: 125874
+      400:
+        description: algum dado do payload enviado esta incorreto
+      401:
+        description: você não esta autenticado
+
+/stores/{store_id}:
+  get:
+    tags:
+      - "Lojas"
+    summary: Busca uma loja especifica
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que sera listada
+    responses:
+      200:
+        description: Loja encontrada com sucesso
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Store"
+      404:
+        description: "Não foi encontrada loja com o id enviado"
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "error"
+              properties:
+                error:
+                  type: string
+                  description: "Mensagem de erro"
+                  example: "store not found"
+  
+  put:
+    tags:
+      - "Lojas"
+    summary: Atualiza uma loja
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que sera atualizada
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateAndUpdateStoresRequest"
+    responses:
+      200:
+        description: "a loja foi atualizada"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Store"
+      400:
+        description: algum dado do payload enviado esta incorreto
+      401:
+        description: você não esta autenticado
+
+
+
+components:
+  schemas:
+    CreateAndUpdateStoresRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: nome da loja
+          example: Restaurante do João
+        cnpj:
+          type: string
+          description: numero do documento da loja
+          example: "12654896632123"
+        corporate_name:
+          type: string
+          description: razão social da loja
+          example: Restaurante do joão LTDA
+    Store:
+      type: object
+      required:
+        - "id"
+      properties:
+        id:
+          type: int
+          description: "id da loja"
+          example: 125874
+        name:
+          type: string
+          description: nome da loja
+          example: Restaurante do João
+        cnpj:
+          type: string
+          description: numero do documento da loja
+          example: "12654896632123"
+        corporate_name:
+          type: string
+          description: razão social da loja
+          example: Restaurante do joão LTDA
+
+      

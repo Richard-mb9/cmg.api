@@ -1,0 +1,1000 @@
+openapi: 3.0.0
+info:
+  description: API para fornecer acesso aos dados da aplicação
+  version: '1.0'
+  title: CMG.api
+  contact:
+    email: richard_mbs@hotmail.com
+servers:
+  - url: http://localhost:5001
+    description: Ambiente local
+paths:
+  /products/ping:
+    get:
+      tags:
+        - Produtos
+      summary: Testar aplicação
+      responses:
+        '200':
+          description: sucesso
+          content:
+            schema:
+              type: string
+              value: pong
+  /products:
+    post:
+      tags:
+        - Produtos
+      summary: Cadastrar um Produto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - store_id
+                - name
+                - price
+                - categories_ids
+                - available_delivery
+                - available_store
+              properties:
+                store_id:
+                  type: number
+                  description: id do estabelecimento que o produto pertence
+                  example: 3458
+                image_url:
+                  type: string
+                  description: url da imagem do produto
+                  example: www.exemplo.com/image/12344
+                name:
+                  type: string
+                  description: nome do produto
+                  example: virada paulista
+                description:
+                  type: string
+                  description: descricao do produto
+                  example: >-
+                    aqui pode conter uma breve descricao, ou o que compõe o
+                    produto
+                price:
+                  type: number
+                  description: preço do produto que esta sendo cadastrado
+                  example: 10.5
+                available_delivery:
+                  type: boolean
+                  description: campo que indica se o produto estara disponivel para entrega
+                  example: true
+                available_store:
+                  type: boolean
+                  description: campo que diz se o produto esta disponivel na loja
+                  example: true
+                categories_ids:
+                  type: array
+                  description: lista dos ids das categorias que o produto ira pertencer
+                  example:
+                    - 250
+                    - 310
+                    - 432
+                  items:
+                    type: number
+      responses:
+        '201':
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: id do produto criado
+                    example: 1
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para criar produtos, ou para criar produtos
+            para esta loja
+  /products/{product_id}:
+    get:
+      tags:
+        - Produtos
+      summary: Buscar um produto
+      parameters:
+        - in: path
+          name: product_id
+          schema:
+            type: integer
+          required: true
+          description: id do produto que esta sendo procurado
+      responses:
+        '200':
+          description: busca de produtos realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - store_id
+                  - name
+                  - price
+                  - categories_ids
+                  - available_store
+                  - available_delivery
+                properties:
+                  id:
+                    type: number
+                    description: id do produto
+                    example: 25469875
+                  store_id:
+                    type: number
+                    description: id do estabelecimento que o produto pertence
+                    example: 3458
+                  image_url:
+                    type: string
+                    description: url da imagem do produto
+                    example: www.exemplo.com/image/12344
+                  name:
+                    type: string
+                    description: nome do produto
+                    example: virada paulista
+                  price:
+                    type: number
+                    description: preço do produto
+                    example: 10.5
+                  available_store:
+                    type: boolean
+                    description: >-
+                      flag que informa se o produto esta disponivel para ser
+                      consumido na loja
+                    example: true
+                  available_delivery:
+                    type: boolean
+                    description: >-
+                      flag que informa se o produto esta disponivel para
+                      delivery
+                    example: true
+                  categories_ids:
+                    type: array
+                    description: lista dos ids das categorias que o produto pertence
+                    example:
+                      - 250
+                      - 310
+                      - 432
+                    items:
+                      type: number
+    put:
+      tags:
+        - Produtos
+      summary: atualizar um produto
+      parameters:
+        - in: path
+          name: product_id
+          schema:
+            type: integer
+          required: true
+          description: id do produto que esta sendo atualizado
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image_url:
+                  type: string
+                  description: url da imagem do produto
+                  example: www.exemplo.com/image/12344
+                name:
+                  type: string
+                  description: nome do produto
+                  example: virada paulista
+                description:
+                  type: string
+                  description: descricao do produto
+                  example: >-
+                    aqui pode conter uma breve descricao, ou o que compõe o
+                    produto
+                price:
+                  type: number
+                  description: preço do produto
+                  example: 10.5
+                available_delivery:
+                  type: boolean
+                  description: campo que indica se o produto estara disponivel para entrega
+                  example: true
+                available_store:
+                  type: boolean
+                  description: campo que diz se o produto esta disponivel na loja
+                  example: true
+                categories_ids:
+                  type: array
+                  description: lista dos ids das categorias do produto
+                  example:
+                    - 250
+                    - 310
+                    - 432
+                  items:
+                    type: number
+      responses:
+        '204':
+          description: Produto atualizado com sucesso
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para alterar produtos, ou para alterar
+            produtos para esta loja
+    delete:
+      tags:
+        - Produtos
+      summary: excluir um produto
+      parameters:
+        - in: path
+          name: product_id
+          schema:
+            type: integer
+          required: true
+          description: id do produto que sera excluido
+      responses:
+        '200':
+          description: Produto excluido com sucesso
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para exluir produtos, ou para excluir
+            produtos desta loja
+  /products/stores/{store_id}:
+    get:
+      tags:
+        - Produtos
+      summary: listar produtos de determinado estabelecimento
+      parameters:
+        - in: path
+          name: store_id
+          schema:
+            type: integer
+          required: true
+          description: id do produto que esta sendo procurado
+      responses:
+        '200':
+          description: busca de produtos realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - store_id
+                    - name
+                    - price
+                    - categories_ids
+                    - available_store
+                    - available_delivery
+                  properties:
+                    id:
+                      type: number
+                      description: id do produto
+                      example: 25469875
+                    store_id:
+                      type: number
+                      description: id do estabelecimento que o produto pertence
+                      example: 3458
+                    image_url:
+                      type: string
+                      description: url da imagem do produto
+                      example: www.exemplo.com/image/12344
+                    name:
+                      type: string
+                      description: nome do produto
+                      example: virada paulista
+                    price:
+                      type: number
+                      description: preço do produto
+                      example: 10.5
+                    available_store:
+                      type: boolean
+                      description: >-
+                        flag que informa se o produto esta disponivel para ser
+                        consumido na loja
+                      example: true
+                    available_delivery:
+                      type: boolean
+                      description: >-
+                        flag que informa se o produto esta disponivel para
+                        delivery
+                      example: true
+                    categories_ids:
+                      type: array
+                      description: lista dos ids das categorias que o produto pertence
+                      example:
+                        - 250
+                        - 310
+                        - 432
+                      items:
+                        type: number
+  components:
+    schemas:
+      AddItemInInvoiceRequest:
+        type: object
+        required:
+          - items
+        properties:
+          items:
+            type: array
+            items:
+              type: object
+              required:
+                - product_id
+                - quantity
+              properties:
+                product_id:
+                  type: integer
+                  description: id do produto
+                  example: 50123
+                quantity:
+                  type: integer
+                  description: quantidade do item que sera adicionado a fatura
+                  example: 3
+      AddItemInInvoiceResponse:
+        type: object
+        properties:
+          price:
+            type: float
+            description: valor total atual da fatura
+            example: 110.55
+      Invoice:
+        type: object
+        properties:
+          id:
+            type: number
+            description: id da mesa
+            example: 12170
+          store_id:
+            type: number
+            description: id da loja
+            example: 1258
+          table_name:
+            type: string
+            description: nome da mesa do pedido
+            example: 1 | MESA 1
+          opened:
+            type: boolean
+            description: indicador se o pedido esta aberto ou se ja foi finalizado
+            example: true
+          total:
+            type: float
+            description: valor atual da fatura
+            example: 10.5
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                order_id:
+                  type: integer
+                  description: id do subpedido
+                  example: 10530
+                product_id:
+                  type: integer
+                  description: id do produto
+                  example: 101258
+                quantity:
+                  type: integer
+                  description: quantidade do item no subpedido
+                  example: 1
+                unity_price:
+                  type: float
+                  description: valor unitario do produto
+                  example: 10.99
+                price:
+                  type: float
+                  description: valor total do subpedido
+                  example: 199
+                delivered:
+                  type: boolean
+                  description: indica se o subpedido foi entrege ou não
+                  example: true
+                product_name:
+                  type: string
+                  description: nome do produto
+                  example: suco de uva
+                product_image_url:
+                  type: string
+                  description: url da imagem do produto
+                  example: https://exemplo.com/image/id
+      InvoiceItem:
+        type: object
+        properties:
+          order_id:
+            type: integer
+            description: id do subpedido
+            example: 10530
+          product_id:
+            type: integer
+            description: id do produto
+            example: 101258
+          quantity:
+            type: integer
+            description: quantidade do item no subpedido
+            example: 1
+          unity_price:
+            type: float
+            description: valor unitario do produto
+            example: 10.99
+          price:
+            type: float
+            description: valor total do subpedido
+            example: 199
+          delivered:
+            type: boolean
+            description: indica se o subpedido foi entrege ou não
+            example: true
+          product_name:
+            type: string
+            description: nome do produto
+            example: suco de uva
+          product_image_url:
+            type: string
+            description: url da imagem do produto
+            example: https://exemplo.com/image/id
+  /products-categories/ping:
+    get:
+      tags:
+        - Categorias de Produtos
+      summary: Testar aplicação
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            schema:
+              type: string
+              value: pong
+  /products-categories:
+    post:
+      tags:
+        - Categorias de Produtos
+      summary: Criar uma categoria de produto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - store_id
+                - name
+              properties:
+                store_id:
+                  type: number
+                  description: id da loja que a categoria ira pertencer
+                  example: 3458
+                name:
+                  type: string
+                  description: nome da categoria
+                  example: bebidas
+      responses:
+        '201':
+          description: Categoria criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: id da categoria criada
+                    example: 1
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para criar categorias, ou para criar
+            categorias para esta loja
+  /products-categories/{category_id}:
+    get:
+      tags:
+        - Categorias de Produtos
+      summary: Busca uma categoria de produtos
+      parameters:
+        - in: path
+          name: category_id
+          schema:
+            type: integer
+          required: true
+          description: id da categoria que esta sendo procurada
+      responses:
+        '200':
+          description: busca de produtos realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - store_id
+                  - name
+                properties:
+                  id:
+                    type: number
+                    description: id da categoria de produto
+                    example: 125874
+                  store_id:
+                    type: number
+                    description: id da loja que a categoria esta vinculada
+                    example: 25864
+                  name:
+                    type: string
+                    description: nome da categoria
+                    example: bebidas
+    put:
+      tags:
+        - Categorias de Produtos
+      summary: Atualiza uma categoria de produtos
+      parameters:
+        - in: path
+          name: category_id
+          schema:
+            type: integer
+          required: true
+          description: id da categoria que esta sendo atualizada
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: novo nome da categoria
+                  example: bebidas alcoolicas
+      responses:
+        '200':
+          description: busca de categorias realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - store_id
+                  - name
+                properties:
+                  id:
+                    type: number
+                    description: id da categoria de produto
+                    example: 125874
+                  store_id:
+                    type: number
+                    description: id da loja que a categoria esta vinculada
+                    example: 25864
+                  name:
+                    type: string
+                    description: nome da categoria
+                    example: bebidas
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para alterar categorias, ou para alterar
+            categorias desta esta loja
+    /delete:
+      tags:
+        - Categorias de Produtos
+      summary: Deleta uma categoria de produtos
+      parameters:
+        - in: path
+          name: category_id
+          schema:
+            type: integer
+          required: true
+          description: id da categoria que sera excluida
+      responses:
+        '200':
+          description: Categoria excluida com sucesso
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para exluir categorias, ou para excluir
+            categorias desta loja
+  /products-categories/stores/{store_id}:
+    get:
+      tags:
+        - Categorias de Produtos
+      summary: Lista as categorias de produtos de uma loja
+      parameters:
+        - in: path
+          name: store_id
+          schema:
+            type: integer
+          required: true
+          description: id da loja que serão listadas as categorias
+      responses:
+        '200':
+          description: busca de categorias de produtos realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - store_id
+                    - name
+                  properties:
+                    id:
+                      type: number
+                      description: id da categoria de produto
+                      example: 125874
+                    store_id:
+                      type: number
+                      description: id da loja que a categoria esta vinculada
+                      example: 25864
+                    name:
+                      type: string
+                      description: nome da categoria
+                      example: bebidas
+  /stores:
+    post:
+      tags:
+        - Lojas
+      summary: Cria uma loja
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: nome da loja
+                  example: Restaurante do João
+                cnpj:
+                  type: string
+                  description: numero do documento da loja
+                  example: '12654896632123'
+                corporate_name:
+                  type: string
+                  description: razão social da loja
+                  example: Restaurante do joão LTDA
+      responses:
+        '201':
+          description: Loja criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: int
+                    description: id da loja
+                    example: 125874
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+  /stores/{store_id}:
+    get:
+      tags:
+        - Mesas
+      summary: Lista as mesas de uma determinada Loja
+      parameters:
+        - in: path
+          name: store_id
+          schema:
+            type: integer
+          required: true
+          description: id da loja que sera feita a busca de mesas
+      responses:
+        '200':
+          description: Loja encontrada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: id da mesa
+                      example: 12170
+                    store_id:
+                      type: number
+                      description: id da loja que a mesa pertence
+                      example: 1258
+                    table_name:
+                      type: string
+                      description: nome da mesa na loja
+                      example: 1 | MESA 1
+                    table_password:
+                      type: string
+                      description: senha para autenticação da mesa
+                      example: '123456'
+                    table_user:
+                      type: string
+                      description: usuario para autenticação da mesa
+                      example: 1_1@table.com
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: você não tem permissão para listar mesas
+        '404':
+          description: Não foi encontrada loja com o id enviado
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    description: Mensagem de erro
+                    example: store not found
+  /tables:
+    post:
+      '201':
+        description: Mesas cadastradas com sucesso
+      '400':
+        description: algum dado do payload enviado esta incorreto
+      '401':
+        description: você não esta autenticado
+      '403':
+        description: você não tem permissão para criar mesas
+      tags:
+        - Mesas
+      summary: cadastra varias mesas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                store_id:
+                  type: number
+                  description: id da loja que as mesas pertencem
+                  example: 1258
+                initial_range:
+                  type: number
+                  description: inicio do intervalo numerico que sera cadastrado
+                  example: 10
+                end_range:
+                  type: number
+                  description: fim do intervalo numerico que sera cadastrado
+                  example: 30
+      responses: null
+  /invoices/stores/{store_id}:
+    post:
+      tags:
+        - Faturas
+      summary: Criar uma fatura
+      parameters:
+        - in: path
+          name: store_id
+          schema:
+            type: integer
+          required: true
+          description: id da loja que a fatura sera criada
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - table_name
+              properties:
+                table_name:
+                  type: string
+                  description: nome da mesa na loja
+                  example: 1 | MESA 1
+      responses:
+        '201':
+          description: Fatura criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: id da fatura criada
+                    example: 1
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: >-
+            você não tem permissão para criar produtos, ou para criar produtos
+            para esta loja
+    get:
+      tags:
+        - Faturas
+      summary: Listar faturas de uma loja
+      parameters:
+        - in: path
+          name: store_id
+          schema:
+            type: integer
+          required: true
+          description: id da loja que a fatura sera listada
+        - in: query
+          name: invoiceId
+          schema:
+            type: integer
+          description: id de uma fatura especifica
+        - in: query
+          name: tableName
+          schema:
+            type: string
+          description: Nome da mesa
+          example: 10 | MESA 10
+      responses:
+        '200':
+          description: Lisagem realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      description: id da mesa
+                      example: 12170
+                    store_id:
+                      type: number
+                      description: id da loja
+                      example: 1258
+                    table_name:
+                      type: string
+                      description: nome da mesa do pedido
+                      example: 1 | MESA 1
+                    opened:
+                      type: boolean
+                      description: >-
+                        indicador se o pedido esta aberto ou se ja foi
+                        finalizado
+                      example: true
+                    total:
+                      type: float
+                      description: valor atual da fatura
+                      example: 10.5
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          order_id:
+                            type: integer
+                            description: id do subpedido
+                            example: 10530
+                          product_id:
+                            type: integer
+                            description: id do produto
+                            example: 101258
+                          quantity:
+                            type: integer
+                            description: quantidade do item no subpedido
+                            example: 1
+                          unity_price:
+                            type: float
+                            description: valor unitario do produto
+                            example: 10.99
+                          price:
+                            type: float
+                            description: valor total do subpedido
+                            example: 199
+                          delivered:
+                            type: boolean
+                            description: indica se o subpedido foi entrege ou não
+                            example: true
+                          product_name:
+                            type: string
+                            description: nome do produto
+                            example: suco de uva
+                          product_image_url:
+                            type: string
+                            description: url da imagem do produto
+                            example: https://exemplo.com/image/id
+        '401':
+          description: você não esta autenticado
+  /invoices/{invoice_id}/items:
+    post:
+      tags:
+        - Faturas
+      summary: Adicionar items a uma fatura
+      parameters:
+        - in: path
+          name: invoice_id
+          schema:
+            type: integer
+          required: true
+          description: id da fatura que esta sendo adicionado o produto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - items
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - product_id
+                      - quantity
+                    properties:
+                      product_id:
+                        type: integer
+                        description: id do produto
+                        example: 50123
+                      quantity:
+                        type: integer
+                        description: quantidade do item que sera adicionado a fatura
+                        example: 3
+      responses:
+        '200':
+          description: Items adicionados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  price:
+                    type: float
+                    description: valor total atual da fatura
+                    example: 110.55
+        '400':
+          description: algum dado do payload enviado esta incorreto
+        '401':
+          description: você não esta autenticado
+        '404':
+          description: Não foi encontrada loja com o id enviado
+  /invoices/items/{order_id}:
+    delete:
+      tags:
+        - Faturas
+      summary: Remove um item de uma fatura
+      parameters:
+        - in: path
+          name: order_id
+          schema:
+            type: integer
+          required: true
+          description: id do item que sera removido da fatura
+      responses:
+        '200':
+          description: Items adicionados com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_invoice_price:
+                    type: float
+                    description: novo valor da fatura
+                    example: 93.36
+        '401':
+          description: você não esta autenticado
+        '403':
+          description: você não tem permissão para remover items de faturas

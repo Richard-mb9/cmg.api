@@ -1,0 +1,17 @@
+openapi: "3.0.0"
+info:
+  description: "API para fornecer acesso aos dados da aplicação"
+  version: "1.0"
+  title: "CMG.api"
+  contact:
+    email: "richard_mbs@hotmail.com"
+servers:
+  - url: http://localhost:5001
+    description: Ambiente local
+
+paths:
+  $ref#products: products.yaml
+  $ref#products-categories: products-categories.yaml
+  $ref#stores: stores.yaml
+  $ref#tables: tables.yaml
+  $ref#invoices: invoices.yaml

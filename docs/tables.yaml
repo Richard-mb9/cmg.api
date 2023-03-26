@@ -1,0 +1,99 @@
+/tables:
+  post:
+    tags:
+      - "Mesas"
+    summary: "cadastra varias mesas"
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateSeveralTablesRequest"
+    responses:
+    201:
+      description: "Mesas cadastradas com sucesso"
+    400:
+      description: algum dado do payload enviado esta incorreto
+    401:
+      description: você não esta autenticado
+    403:
+      description: você não tem permissão para criar mesas
+
+/stores/{store_id}:
+  get:
+    tags:
+      - "Mesas"
+    summary: Lista as mesas de uma determinada Loja
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que sera feita a busca de mesas
+    responses:
+      200:
+        description: Loja encontrada com sucesso
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tables"
+      401:
+        description: você não esta autenticado
+      403:
+        description: você não tem permissão para listar mesas
+      404:
+        description: "Não foi encontrada loja com o id enviado"
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "error"
+              properties:
+                error:
+                  type: string
+                  description: "Mensagem de erro"
+                  example: "store not found"
+
+components:
+  schemas:
+    CreateSeveralTablesRequest:
+      type: object
+      properties:
+        store_id:
+          type: number
+          description: id da loja que as mesas pertencem
+          example: 1258
+        initial_range:
+          type: number
+          description: inicio do intervalo numerico que sera cadastrado
+          example: 10
+        end_range:
+          type: number
+          description: fim do intervalo numerico que sera cadastrado
+          example: 30
+    Tables:
+      type: object
+      properties:
+        id:
+          type: number
+          description: id da mesa
+          example: 12170
+        store_id:
+          type: number
+          description: id da loja que a mesa pertence
+          example: 1258
+        table_name:
+          type: string
+          description: nome da mesa na loja
+          example: 1 | MESA 1
+        table_password:
+          type: string
+          description: senha para autenticação da mesa
+          example: "123456"
+        table_user:
+          type: string
+          description: usuario para autenticação da mesa
+          example: "1_1@table.com"

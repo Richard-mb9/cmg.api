@@ -1,0 +1,247 @@
+/products/ping:
+  get:
+    tags:
+      - "Produtos"
+    summary: "Testar aplicação"
+    responses:
+      200:
+        description: "sucesso"
+        content:
+          schema:
+            type: "string"
+            value: pong
+
+/products:
+  post:
+    tags:
+      - "Produtos"
+    summary: "Cadastrar um Produto"
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "store_id"
+              - "name"
+              - "price"
+              - "categories_ids"
+              - "available_delivery"
+              - "available_store"
+            properties:
+              store_id:
+                type: number
+                description: id do estabelecimento que o produto pertence
+                example: 3458
+              image_url:
+                type: string
+                description: url da imagem do produto
+                example: "www.exemplo.com/image/12344"
+              name:
+                type: string
+                description: nome do produto
+                example: virada paulista
+              description:
+                type: string
+                description: descricao do produto
+                example: aqui pode conter uma breve descricao, ou o que compõe o produto
+              price:
+                type: number
+                description: preço do produto que esta sendo cadastrado
+                example: 10.50
+              available_delivery:
+                type: boolean
+                description: campo que indica se o produto estara disponivel para entrega
+                example: true
+              available_store:
+                type: boolean
+                description: campo que diz se o produto esta disponivel na loja
+                example: true
+              categories_ids:
+                type: array
+                description: lista dos ids das categorias que o produto ira pertencer
+                example: [250, 310, 432]
+                items:
+                  type: number
+    responses:
+      201:
+        description: "Produto criado com sucesso"
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                  description: "id do produto criado"
+                  example: 1
+      400:
+        description: algum dado do payload enviado esta incorreto
+      403:
+        description: você não tem permissão para criar produtos, ou para criar produtos para esta loja
+      401:
+        description: você não esta autenticado
+
+/products/{product_id}:
+  get:
+    tags:
+      - "Produtos"
+    summary: "Buscar um produto"
+    parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+        description: id do produto que esta sendo procurado
+    responses:
+      200:
+        description: "busca de produtos realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/product"
+  put:
+    tags:
+      - "Produtos"
+    summary: "atualizar um produto"
+    parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+        description: id do produto que esta sendo atualizado
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              image_url:
+                type: string
+                description: url da imagem do produto
+                example: "www.exemplo.com/image/12344"
+              name:
+                type: string
+                description: nome do produto
+                example: virada paulista
+              description:
+                type: string
+                description: descricao do produto
+                example: aqui pode conter uma breve descricao, ou o que compõe o produto
+              price:
+                type: number
+                description: preço do produto
+                example: 10.50
+              available_delivery:
+                type: boolean
+                description: campo que indica se o produto estara disponivel para entrega
+                example: true
+              available_store:
+                type: boolean
+                description: campo que diz se o produto esta disponivel na loja
+                example: true
+              categories_ids:
+                type: array
+                description: lista dos ids das categorias do produto
+                example: [250, 310, 432]
+                items:
+                  type: number
+    responses:
+      204:
+        description: "Produto atualizado com sucesso"
+      400:
+        description: algum dado do payload enviado esta incorreto
+      403:
+        description: você não tem permissão para alterar produtos, ou para alterar produtos para esta loja
+      401:
+        description: você não esta autenticado
+  delete:
+    tags:
+      - "Produtos"
+    summary: "excluir um produto"
+    parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+        description: id do produto que sera excluido
+    responses:
+      200:
+        description: "Produto excluido com sucesso"
+      403:
+        description: você não tem permissão para exluir produtos, ou para excluir produtos desta loja
+      401:
+        description: você não esta autenticado
+
+/products/stores/{store_id}:
+  get:
+    tags:
+      - "Produtos"
+    summary: "listar produtos de determinado estabelecimento"
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id do produto que esta sendo procurado
+    responses:
+      200:
+        description: "busca de produtos realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/product"
+
+components:
+  schemas:
+    product:
+      type: object
+      required:
+        - "id"
+        - "store_id"
+        - "name"
+        - "price"
+        - "categories_ids"
+        - "available_store"
+        - "available_delivery"
+      properties:
+        id:
+          type: number
+          description: id do produto
+          example: 25469875
+        store_id:
+          type: number
+          description: id do estabelecimento que o produto pertence
+          example: 3458
+        image_url:
+          type: string
+          description: url da imagem do produto
+          example: "www.exemplo.com/image/12344"
+        name:
+          type: string
+          description: nome do produto
+          example: virada paulista
+        price:
+          type: number
+          description: preço do produto
+          example: 10.50
+        available_store:
+          type: boolean
+          description: flag que informa se o produto esta disponivel para ser consumido na loja
+          example: true
+        available_delivery:
+          type: boolean
+          description: flag que informa se o produto esta disponivel para delivery
+          example: true
+        categories_ids:
+          type: array
+          description: lista dos ids das categorias que o produto pertence
+          example: [250, 310, 432]
+          items:
+            type: number

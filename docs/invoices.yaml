@@ -1,0 +1,230 @@
+/invoices/stores/{store_id}:
+  post:
+    tags:
+      - "Faturas"
+    summary: "Criar uma fatura"
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que a fatura sera criada
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "table_name"
+            properties:
+              table_name:
+                type: string
+                description: nome da mesa na loja
+                example: 1 | MESA 1
+    responses:
+      201:
+        description: "Fatura criada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                  description: "id da fatura criada"
+                  example: 1
+      400:
+        description: algum dado do payload enviado esta incorreto
+      403:
+        description: você não tem permissão para criar produtos, ou para criar produtos para esta loja
+      401:
+        description: você não esta autenticado
+
+  get:
+    tags:
+      - "Faturas"
+    summary: "Listar faturas de uma loja"
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que a fatura sera listada
+      - in: query
+        name: invoiceId
+        schema:
+          type: integer
+        description: id de uma fatura especifica
+      - in: query
+        name: tableName
+        schema:
+          type: string
+        description: Nome da mesa
+        example: 10 | MESA 10
+    responses:
+      200:
+        description: "Lisagem realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Invoice"
+      401:
+        description: você não esta autenticado
+
+/invoices/{invoice_id}/items:
+  post:
+    tags:
+      - "Faturas"
+    summary: "Adicionar items a uma fatura"
+    parameters:
+      - in: path
+        name: invoice_id
+        schema:
+          type: integer
+        required: true
+        description: id da fatura que esta sendo adicionado o produto
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AddItemInInvoiceRequest"
+    responses:
+      200:
+        description: Items adicionados com sucesso
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddItemInInvoiceResponse"
+      400:
+        description: algum dado do payload enviado esta incorreto
+      401:
+        description: você não esta autenticado
+      404:
+        description: "Não foi encontrada loja com o id enviado"
+
+/invoices/items/{order_id}:
+  delete:
+    tags:
+      - "Faturas"
+    summary: "Remove um item de uma fatura"
+    parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+        description: id do item que sera removido da fatura
+    responses:
+      200:
+        description: Items adicionados com sucesso
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_invoice_price:
+                  type: float
+                  description: novo valor da fatura
+                  example: 93.36
+      403:
+        description: você não tem permissão para remover items de faturas
+      401:
+        description: você não esta autenticado
+
+components:
+  schemas:
+    AddItemInInvoiceRequest:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - product_id
+              - quantity
+            properties:
+              product_id:
+                type: integer
+                description: id do produto
+                example: 50123
+              quantity:
+                type: integer
+                description: quantidade do item que sera adicionado a fatura
+                example: 3
+    AddItemInInvoiceResponse:
+      type: object
+      properties:
+        price:
+          type: float
+          description: valor total atual da fatura
+          example: 110.55
+
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: number
+          description: id da mesa
+          example: 12170
+        store_id:
+          type: number
+          description: id da loja
+          example: 1258
+        table_name:
+          type: string
+          description: nome da mesa do pedido
+          example: 1 | MESA 1
+        opened:
+          type: boolean
+          description: indicador se o pedido esta aberto ou se ja foi finalizado
+          example: True
+        total:
+          type: float
+          description: valor atual da fatura
+          example: 10.50
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceItem"
+    InvoiceItem:
+      type: object
+      properties:
+        order_id:
+          type: integer
+          description: id do subpedido
+          example: 10530
+        product_id:
+          type: integer
+          description: id do produto
+          example: 101258
+        quantity:
+          type: integer
+          description: quantidade do item no subpedido
+          example: 1
+        unity_price:
+          type: float
+          description: valor unitario do produto
+          example: 10.99
+        price:
+          type: float
+          description: valor total do subpedido
+          example: 199.00
+        delivered:
+          type: boolean
+          description: indica se o subpedido foi entrege ou não
+          example: True
+        product_name:
+          type: string
+          description: nome do produto
+          example: suco de uva
+        product_image_url:
+          type: string
+          description: url da imagem do produto
+          example: https://exemplo.com/image/id

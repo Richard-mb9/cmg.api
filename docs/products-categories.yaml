@@ -1,0 +1,170 @@
+/products-categories/ping:
+  get:
+    tags:
+      - "Categorias de Produtos"
+    summary: "Testar aplicação"
+    responses:
+      200:
+        description: "Sucesso"
+        content:
+          schema:
+            type: "string"
+            value: pong
+
+/products-categories:
+  post:
+    tags:
+      - "Categorias de Produtos"
+    summary: "Criar uma categoria de produto"
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "store_id"
+              - "name"
+            properties:
+              store_id:
+                type: number
+                description: id da loja que a categoria ira pertencer
+                example: 3458
+              name:
+                type: string
+                description: nome da categoria
+                example: bebidas
+    responses:
+      201:
+        description: "Categoria criada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "number"
+                  description: "id da categoria criada"
+                  example: 1
+      400:
+        description: algum dado do payload enviado esta incorreto
+      403:
+        description: você não tem permissão para criar categorias, ou para criar categorias para esta loja
+      401:
+        description: você não esta autenticado
+
+/products-categories/{category_id}:
+  get:
+    tags:
+      - "Categorias de Produtos"
+    summary: Busca uma categoria de produtos
+    parameters:
+      - in: path
+        name: category_id
+        schema:
+          type: integer
+        required: true
+        description: id da categoria que esta sendo procurada
+    responses:
+      200:
+        description: "busca de produtos realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryProduct"
+  put:
+    tags:
+      - "Categorias de Produtos"
+    summary: Atualiza uma categoria de produtos
+    parameters:
+      - in: path
+        name: category_id
+        schema:
+          type: integer
+        required: true
+        description: id da categoria que esta sendo atualizada
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: novo nome da categoria
+                example: bebidas alcoolicas
+    responses:
+      200:
+        description: "busca de categorias realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryProduct"
+      400:
+        description: algum dado do payload enviado esta incorreto
+      403:
+        description: você não tem permissão para alterar categorias, ou para alterar categorias desta esta loja
+      401:
+        description: você não esta autenticado
+
+  /delete:
+    tags:
+      - "Categorias de Produtos"
+    summary: Deleta uma categoria de produtos
+    parameters:
+      - in: path
+        name: category_id
+        schema:
+          type: integer
+        required: true
+        description: id da categoria que sera excluida
+    responses:
+      200:
+        description: "Categoria excluida com sucesso"
+      403:
+        description: você não tem permissão para exluir categorias, ou para excluir categorias desta loja
+      401:
+        description: você não esta autenticado
+
+/products-categories/stores/{store_id}:
+  get:
+    tags:
+      - "Categorias de Produtos"
+    summary: Lista as categorias de produtos de uma loja
+    parameters:
+      - in: path
+        name: store_id
+        schema:
+          type: integer
+        required: true
+        description: id da loja que serão listadas as categorias
+    responses:
+      200:
+        description: "busca de categorias de produtos realizada com sucesso"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CategoryProduct"
+
+components:
+  schemas:
+    CategoryProduct:
+      type: object
+      required:
+        - "id"
+        - "store_id"
+        - "name"
+      properties:
+        id:
+          type: number
+          description: id da categoria de produto
+          example: 125874
+        store_id:
+          type: number
+          description: id da loja que a categoria esta vinculada
+          example: 25864
+        name:
+          type: string
+          description: nome da categoria
+          example: bebidas
