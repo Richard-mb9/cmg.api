@@ -23,7 +23,7 @@ def ping():
 
 
 @app.route('/stores/<store_id>', methods=['POST'])
-@login_required
+# @login_required
 def create_invoice_by_store(store_id: int):
     data = loads(request.data)
     validator(create_invoice_by_store_validator, data)

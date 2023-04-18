@@ -30,10 +30,10 @@ class InvoicesRepository(BaseRepository):
                 ii.price,
                 ii.delivered
             from invoices i
-            inner join invoices_items ii on ii.invoice_id = i.id
-            inner join tables t on t.id = i.table_id
-            inner join products p on p.id = ii.product_id
-            where 
+            inner join "tables" t on t.id = i.table_id
+            left join invoices_items ii on ii.invoice_id = i.id
+            left join products p on p.id = ii.product_id
+            where
                 i.store_id = {store_id}
                 and ({invoice_id} is null or i.id = {invoice_id})
                 and ({table_name} is null or t.table_name = '{table_name}')
